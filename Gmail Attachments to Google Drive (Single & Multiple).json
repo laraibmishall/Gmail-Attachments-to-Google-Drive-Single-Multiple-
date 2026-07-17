@@ -1,0 +1,465 @@
+{
+  "name": "Gmail Attachments to Google Drive (Single & Multiple)",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "acea3236-15c8-4be4-b0d1-251a00da18d7",
+      "name": "Gmail Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b0f63b0d-4fe9-4e8a-adee-92374fad9807",
+              "leftValue": "={{ Object.keys($binary).length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        368,
+        0
+      ],
+      "id": "d9ed597a-fef5-4d37-bf01-9223edaae0e3",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "attachment_0",
+        "name": "={{ $json.id }}",
+        "driveId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        624,
+        0
+      ],
+      "id": "9ea87759-6688-4042-b9a7-dd7dede35595",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "QICpba6lCeX9xg2j",
+          "name": "Google Drive OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=Attachment successfully send for an email  {{ $('Filter').item.json.headers.subject }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        848,
+        0
+      ],
+      "id": "6666e4a4-9cdd-4306-9965-4213cb9f504c",
+      "name": "Discord",
+      "webhookId": "a992f7dc-8202-433f-b573-9577d44e3cc6"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -160,
+        304
+      ],
+      "id": "771a6c53-9ac9-4226-b17e-01b6740c441e",
+      "name": "Gmail Trigger1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MYRBc8WdfS2m6cCf",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b0f63b0d-4fe9-4e8a-adee-92374fad9807",
+              "leftValue": "={{ Object.keys($binary).length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        128,
+        304
+      ],
+      "id": "60ab9391-f50b-4312-aa7d-6617fd889d7e",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "$binary",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        288,
+        304
+      ],
+      "id": "3056ecab-3d63-431e-9d2a-643b19b589d7",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "={{ Object.keys($binary)[0] }}",
+        "name": "={{ $binary[Object.keys($binary)[0]].fileName }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1SG9gE5OskiYVH2KlnZfpnVU8cFn9WQaO",
+          "mode": "list",
+          "cachedResultName": "PROJECTS",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1SG9gE5OskiYVH2KlnZfpnVU8cFn9WQaO"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        432,
+        304
+      ],
+      "id": "38c2b350-7f31-42e0-8b99-08dc16891460",
+      "name": "Upload file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "QICpba6lCeX9xg2j",
+          "name": "Google Drive OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const fileNames = items.map(item => item.json.name).join('\\n');\nreturn [{ json: { fileList: fileNames } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        304
+      ],
+      "id": "8f6fcd1e-2395-4ca0-8cbd-75b66999ec89",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=Attachment successfully send for an email{{ $('Filter1').item.json.subject }} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        720,
+        304
+      ],
+      "id": "c2bc1428-4387-4447-8680-eb27baf5cc7b",
+      "name": "Discord1",
+      "webhookId": "a992f7dc-8202-433f-b573-9577d44e3cc6",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "Tvv8ufDpXr910Qma",
+          "name": "Discord Webhook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "SINGLE ATTACHMESNT"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -288,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "445853ef-f26c-4448-92fc-29324f321d18",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "MULTIPLE ATTACHMESNT"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -416,
+        272
+      ],
+      "typeVersion": 1,
+      "id": "6387a523-4b88-44f6-b0f7-57f0625caac4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $json.id }}",
+        "simple": false,
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        0
+      ],
+      "id": "c892f5bb-acb0-4d9d-ba74-bfee84f22cee",
+      "name": "Get a message",
+      "webhookId": "f2c5a5d7-431f-43e0-ae0d-99a30df9bd8e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MYRBc8WdfS2m6cCf",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $json.id }}",
+        "simple": false,
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        304
+      ],
+      "id": "73cc9934-4bb4-47f9-8204-33c75510c40a",
+      "name": "Get a message1",
+      "webhookId": "f2c5a5d7-431f-43e0-ae0d-99a30df9bd8e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MYRBc8WdfS2m6cCf",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Discord1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a message": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a message1": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "101ba9b5-7f4b-4c5e-9843-d7de2f741aaa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aef2ee4895d9bc675dfa2305fc23e5ff51fa46d792a8377e6255b2a2c9b3a642"
+  },
+  "nodeGroups": [],
+  "id": "5sqEnJ5uRC8D9fK3",
+  "tags": []
+}
